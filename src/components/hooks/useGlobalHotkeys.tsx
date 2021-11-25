@@ -1,15 +1,15 @@
 import React from "react";
-import { UndoContextType } from "../../lib/undo/createUndoHistoryContext";
-import { XLSForm } from "../../xlsform-simple-schema/types/XLSForm";
 
-export function useGlobalHotkeys(undoContext: UndoContextType<XLSForm>) {
+export function useGlobalHotkeys() {
   return React.useMemo(
     () => [
       {
         combo: "mod+z",
         global: true,
         label: "Undo",
-        onKeyDown: undoContext.undo,
+        onKeyDown: () => {
+          alert("!!");
+        },
         allowInInput: false,
         preventDefault: true,
       },
@@ -17,11 +17,13 @@ export function useGlobalHotkeys(undoContext: UndoContextType<XLSForm>) {
         global: true,
         combo: "mod+shift+z",
         label: "Redo",
-        onKeyDown: undoContext.redo,
+        onKeyDown: () => {
+          alert("!!");
+        },
         allowInInput: false,
         preventDefault: true,
       },
     ],
-    [undoContext.redo, undoContext.undo]
+    []
   );
 }

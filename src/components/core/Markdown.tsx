@@ -1,6 +1,6 @@
 import { Callout } from "@blueprintjs/core";
 import { omit } from "lodash";
-import marked from "marked";
+import { marked } from "marked";
 import * as React from "react";
 import unindent from "./unindent";
 
@@ -42,7 +42,7 @@ function Markdown(props: {
   /** Removes <p></p> tags around the markdown code */
   inline?: boolean;
   style?: React.CSSProperties;
-  markedOptions?: marked.MarkedOptions;
+  markedOptions?: Parameters<typeof marked>[1];
 }) {
   const markedFn = React.useMemo(
     () => (markdown: string) => {
