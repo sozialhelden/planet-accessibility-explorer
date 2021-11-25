@@ -30,12 +30,6 @@ function App() {
   // const { viewMenuButton, viewOptions } = useViewOptionsButton();
   // const isDarkMode = useDarkMode();
   // The panel showing the Linked Data vocabulary graph
-  const sidebar = (
-    <OverflowScrollContainer style={{ padding: "1rem", margin: "0" }}>
-      <h1>Miki: Erforsche deinen Kiez</h1>
-      <Legend />
-    </OverflowScrollContainer>
-  );
 
   const contexts: ContextAndValue<any>[] = [
     // [RDFGraphContext, rdfStore],
@@ -51,15 +45,26 @@ function App() {
     [history, location]
   );
 
+  const sidebar = (
+    <OverflowScrollContainer style={{ padding: "1rem", margin: "0" }}>
+      <h1>Miki: Erforsche deinen Kiez</h1>
+      <Legend />
+    </OverflowScrollContainer>
+  );
+
+  const mapView = (
+    <MapView
+      featureId={undefined}
+      onSelectFeature={onSelectFeature}
+      visible={true}
+    />
+  );
+
   const navbarAndBody = (
     <>
       <AppBody>
         {sidebar}
-        <MapView
-          featureId={undefined}
-          onSelectFeature={onSelectFeature}
-          visible={true}
-        />
+        {mapView}
       </AppBody>
     </>
   );

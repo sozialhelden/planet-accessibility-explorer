@@ -5,6 +5,7 @@ import "react-map-gl-geocoder/dist/mapbox-gl-geocoder.css";
 import { useHistory } from "react-router";
 import useMeasure from "react-use-measure";
 import styled from "styled-components";
+import OverflowScrollContainer from "./OverflowScrollContainer";
 
 // if (Meteor.isClient) {
 //   const { setRTLTextPlugin } = require('mapbox-gl');
@@ -199,7 +200,7 @@ export default function MapView(props: IProps) {
     // Without hiding overflowing content, it would adapt its own size to its overflowing content
     // size on reducing its size while resizing the viewport, so it would only grow bigger, never
     // shrink.
-    <HiddenOverflowDiv
+    <OverflowScrollContainer
       ref={containerRef}
       className={props.className}
       style={{
@@ -235,6 +236,6 @@ export default function MapView(props: IProps) {
         <ZoomToDataOnLoad />
       </ReactMapGL>
       {props.children}
-    </HiddenOverflowDiv>
+    </OverflowScrollContainer>
   );
 }
