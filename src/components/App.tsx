@@ -7,14 +7,12 @@ import * as React from "react";
 import { useHistory, useLocation } from "react-router";
 import styled from "styled-components";
 import "./App.css";
-import BlueprintDarkModeContainer from "./components/core/BlueprintDarkModeContainer";
-import composeContexts, {
-  ContextAndValue,
-} from "./components/core/composeContexts";
-import { useGlobalHotkeys } from "./components/hooks/useGlobalHotkeys";
-import { Legend } from "./components/Legend";
-import MapView from "./components/MapView";
-import OverflowScrollContainer from "./components/OverflowScrollContainer";
+import BlueprintDarkModeContainer from "./core/BlueprintDarkModeContainer";
+import composeContexts, { ContextAndValue } from "./core/composeContexts";
+import { useGlobalHotkeys } from "./hooks/useGlobalHotkeys";
+import { Legend } from "./Legend";
+import MapView from "./map/MapView";
+import OverflowScrollContainer from "./OverflowScrollContainer";
 
 FocusStyleManager.onlyShowFocusOnTabs();
 
@@ -46,7 +44,9 @@ function App() {
   );
 
   const sidebar = (
-    <OverflowScrollContainer style={{ padding: "1rem", margin: "0" }}>
+    <OverflowScrollContainer
+      style={{ width: "400px", padding: "1rem", margin: "0" }}
+    >
       <h1>Miki: Erforsche deinen Kiez</h1>
       <Legend />
     </OverflowScrollContainer>

@@ -1,11 +1,19 @@
 import * as React from "react";
 import { useCallback, useLayoutEffect, useRef, useState } from "react";
-import ReactMapGL, { MapContext, MapRef, ViewportProps } from "react-map-gl";
+import ReactMapGL, {
+  Layer,
+  MapContext,
+  MapRef,
+  Source,
+  ViewportProps,
+} from "react-map-gl";
 import "react-map-gl-geocoder/dist/mapbox-gl-geocoder.css";
 import { useHistory } from "react-router";
 import useMeasure from "react-use-measure";
 import styled from "styled-components";
-import OverflowScrollContainer from "./OverflowScrollContainer";
+import OverflowScrollContainer from "../OverflowScrollContainer";
+import { databaseTableNames, filterLayers } from "./filterLayers";
+import useMapStyle from "./useMapStyle";
 
 // if (Meteor.isClient) {
 //   const { setRTLTextPlugin } = require('mapbox-gl');
@@ -195,6 +203,12 @@ export default function MapView(props: IProps) {
     // const map = mapRef.current?.getMap();
   }, [mapRef.current]);
 
+  const mapStyle = useMapStyle();
+  const layers = React.useMemo(
+    () => mapStyle.data?.layers && filterLayers(mapStyle.data?.layers),
+    [mapStyle]
+  );
+
   return (
     // Container needs to hide overflow because it's used for measurement.
     // Without hiding overflowing content, it would adapt its own size to its overflowing content
@@ -204,6 +218,7 @@ export default function MapView(props: IProps) {
       ref={containerRef}
       className={props.className}
       style={{
+        flex: 1,
         display: props.visible === false ? "none" : "block",
         position: "relative",
       }}
@@ -218,21 +233,19 @@ export default function MapView(props: IProps) {
         mapStyle="mapbox://styles/mapbox/light-v10"
         ref={mapRef}
       >
-        {/* <Source
-          type="geojson"
-          data={`/${lastImportTypeWithDashes}.json?includeSourceIds=${props.sourceIds.join(
-            ","
-          )}&limit=20000&surrogateKeys=false&userToken=${
-            userToken.token
-          }&timestamp=${props.timestamp}&includePlacesWithoutAccessibility=1`}
-          cluster={true}
-          clusterMaxZoom={9}
-          clusterRadius={50}
-          id="features"
-        >
-          <Layer {...featureLayer} />
-          <Layer {...featureDetailsLayer} />
-        </Source> */}
+        {databaseTableNames.map((name) => (
+          <Source
+            type="vector"
+            tiles={[
+              `${process.env.REACT_APP_OSM_API_BACKEND_URL}/${name}.mvt?limit=10000&bbox={bbox-epsg-3857}&epsg=3857`,
+            ]}
+            id={name}
+            key={name}
+          />
+        ))}
+        {layers?.map((layer) => (
+          <Layer key={layer.id} {...(layer as any)} />
+        ))}
         <ZoomToDataOnLoad />
       </ReactMapGL>
       {props.children}
