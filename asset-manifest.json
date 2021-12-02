@@ -1,8 +1,8 @@
 {
   "files": {
     "main.css": "/planet-accessibility-explorer/static/css/main.a15bf70c.chunk.css",
-    "main.js": "/planet-accessibility-explorer/static/js/main.c9d3d5e4.chunk.js",
-    "main.js.map": "/planet-accessibility-explorer/static/js/main.c9d3d5e4.chunk.js.map",
+    "main.js": "/planet-accessibility-explorer/static/js/main.d82e9b53.chunk.js",
+    "main.js.map": "/planet-accessibility-explorer/static/js/main.d82e9b53.chunk.js.map",
     "runtime-main.js": "/planet-accessibility-explorer/static/js/runtime-main.50053cf3.js",
     "runtime-main.js.map": "/planet-accessibility-explorer/static/js/runtime-main.50053cf3.js.map",
     "static/css/2.49bda12d.chunk.css": "/planet-accessibility-explorer/static/css/2.49bda12d.chunk.css",
@@ -23,6 +23,6 @@
     "static/css/2.49bda12d.chunk.css",
     "static/js/2.95ea4d32.chunk.js",
     "static/css/main.a15bf70c.chunk.css",
-    "static/js/main.c9d3d5e4.chunk.js"
+    "static/js/main.d82e9b53.chunk.js"
   ]
 }
