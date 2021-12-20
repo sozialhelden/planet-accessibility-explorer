@@ -1,30 +1,29 @@
+import mapboxgl from "mapbox-gl";
 import * as React from "react";
 import { useCallback, useLayoutEffect, useRef, useState } from "react";
 import ReactMapGL, {
   Layer,
   MapContext,
+  MapEvent,
   MapRef,
+  NavigationControl,
   Source,
   ViewportProps,
 } from "react-map-gl";
 import "react-map-gl-geocoder/dist/mapbox-gl-geocoder.css";
-import { useHistory } from "react-router";
+import { useHistory, useLocation } from "react-router";
 import useMeasure from "react-use-measure";
-import styled from "styled-components";
+import FeatureListPopup from "../feature/FeatureListPopup";
+import getFeatureIdsFromLocation from "../feature/getFeatureIdsFromLocation";
 import OverflowScrollContainer from "../OverflowScrollContainer";
 import { databaseTableNames, filterLayers } from "./filterLayers";
 import useMapStyle from "./useMapStyle";
 
-// if (Meteor.isClient) {
-//   const { setRTLTextPlugin } = require('mapbox-gl');
-//   setRTLTextPlugin(
-//     // find out the latest version at https://www.npmjs.com/package/@mapbox/mapbox-gl-rtl-text
-//     'https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-rtl-text/v0.2.3/mapbox-gl-rtl-text.js',
-//     (error: Error) => { console.log('Could not load RTL text plugin:', error); },
-//     // lazy: only load when the map first encounters Hebrew or Arabic text
-//     true
-//   );
-// }
+// The following is required to stop "npm build" from transpiling mapbox code.
+// notice the exclamation point in the import.
+// @ts-ignore
+// eslint-disable-next-line import/no-webpack-loader-syntax, import/no-unresolved
+mapboxgl.workerClass = require("worker-loader!mapbox-gl/dist/mapbox-gl-csp-worker").default;
 
 interface IProps {
   featureId?: string;
@@ -34,10 +33,6 @@ interface IProps {
   visible?: boolean;
   children?: React.ReactNode;
 }
-
-const HiddenOverflowDiv = styled.div`
-  overflow: hidden;
-`;
 
 function ZoomToDataOnLoad() {
   const mapContext = React.useContext(MapContext);
@@ -52,30 +47,22 @@ export default function MapView(props: IProps) {
   const [containerRef, { width, height }] = useMeasure();
   const mapRef = useRef<MapRef>(null);
 
-  // const { model: feature } = useMeteorData(
-  //   () => ({
-  //     subscriptions:
-  //       lastImportType && props.featureId
-  //         ? [[`${collectionName}.private`, '_id', props.featureId]]
-  //         : [],
-  //     fetchFunction: () => {
-  //       if (!lastImportType) {
-  //         return;
-  //       }
-  //       return collection?.findOne(props.featureId);
-  //     },
-  //   }),
-  //   [lastImportType, props.featureId]
-  // );
+  const history = useHistory();
+  const location = useLocation();
+  const featureIds = getFeatureIdsFromLocation(location);
+  const query = new URLSearchParams(location.search);
+  const latitude = query.get("lat");
+  const longitude = query.get("lon");
+  const zoom = query.get("zoom");
 
   const [viewport, setViewport] = useState<
     Partial<ViewportProps> & { width: number; height: number }
   >({
     width: 100,
     height: 100,
-    latitude: 37.7577,
-    longitude: -122.4376,
-    zoom: 1,
+    latitude: (latitude && parseFloat(latitude)) || 52.5,
+    longitude: (longitude && parseFloat(longitude)) || 13.3,
+    zoom: (zoom && parseFloat(zoom)) || (latitude && longitude ? 18 : 10),
   });
 
   // Pan to feature boundary if no single feature is selected and the source is loaded for the first time
@@ -159,9 +146,8 @@ export default function MapView(props: IProps) {
   useLayoutEffect(() => {
     const newViewport = { ...viewport, width, height };
     setViewport(newViewport);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [width, height]);
-
-  const history = useHistory();
 
   // const featureLayer = useMemo(() => {
   //   return generateSelectedFeatureLayer(props.featureId);
@@ -175,33 +161,76 @@ export default function MapView(props: IProps) {
   //   return generateUnclusteredPointLabelLayer(lastImportType, languageTagsStrings, props.featureId);
   // }, [lastImportType, props.featureId]);
 
-  const handleMapClick = useCallback<(event: any) => void>(
+  const handleMapClick = useCallback<(event: MapEvent) => void>(
     (event) => {
-      const feature = event.features[0];
-      if (!feature) {
+      console.log(event);
+
+      const selectedFeatureCount = event?.features?.length;
+      if (!selectedFeatureCount) {
+        // Clicked outside of a clickable map feature
+        history.push("/");
+      }
+
+      if (selectedFeatureCount === 1) {
+        const feature = event.features?.[0];
         // Show source overview again if user just clicks/taps on the map
-        history.push(`/`);
+        feature &&
+          history.push(
+            `/${feature.source}/${feature.properties.id}?lon=${event.lngLat[0]}&lat=${event.lngLat[1]}&zoom=${zoom}`
+          );
         return;
       }
-      // if (feature?.layer.id === featureLayer.id) {
-      //   // Selected a single point
-      //   props.onSelectFeature(feature.properties._id || feature._id);
-      // }
+
+      history.push(
+        `/composite/${event.features
+          ?.map((f) => [f.source, f.properties.id].join(":"))
+          .join(",")}?lon=${event.lngLat[0]}&lat=${
+          event.lngLat[1]
+        }&zoom=${zoom}`
+      );
+      return;
     },
-    [viewport]
+    [history, zoom]
   );
+
+  const updateViewportQuery = useCallback(() => {
+    const location = history.location;
+    const query = new URLSearchParams(location.search);
+
+    if (viewport.zoom) {
+      query.set("zoom", viewport.zoom.toString());
+    }
+
+    if (featureIds.length === 0) {
+      if (viewport.latitude) {
+        query.set("lat", viewport.latitude.toString());
+      }
+
+      if (viewport.longitude) {
+        query.set("lon", viewport.longitude.toString());
+      }
+    }
+
+    location.search = query.toString();
+    history.replace(location);
+  }, [viewport, history, featureIds]);
+
+  const closePopup = useCallback(() => {
+    history.push(`/`);
+    updateViewportQuery();
+  }, [history, updateViewportQuery]);
 
   const setViewportCallback = useCallback(
     (viewState, interactionState) => {
       // console.log('Setting viewport because of callback:', viewState, interactionState);
       setViewport({ ...viewport, ...viewState });
     },
-    [setViewport]
+    [setViewport, viewport]
   );
 
-  const onLoadCallback = useCallback(() => {
-    // const map = mapRef.current?.getMap();
-  }, [mapRef.current]);
+  // const onLoadCallback = useCallback(() => {
+  // const map = mapRef.current?.getMap();
+  // }, [mapRef.current]);
 
   const mapStyle = useMapStyle();
   const layers = React.useMemo(
@@ -227,18 +256,28 @@ export default function MapView(props: IProps) {
         {...viewport}
         mapboxApiAccessToken={process.env.REACT_APP_MAPBOX_ACCESS_TOKEN}
         onViewportChange={setViewportCallback}
-        // interactiveLayerIds={[featureLayer?.id]}
+        onTransitionEnd={updateViewportQuery}
+        onTouchEnd={updateViewportQuery}
+        onMouseUp={updateViewportQuery}
+        interactiveLayerIds={mapStyle.data?.layers
+          ?.map((l) => l.id)
+          .filter((id) => id.startsWith("osm-"))}
         onClick={handleMapClick}
-        onLoad={onLoadCallback}
+        // onLoad={onLoadCallback}
         mapStyle="mapbox://styles/mapbox/light-v10"
+        // mapStyle={null}
         ref={mapRef}
       >
         {databaseTableNames.map((name) => (
           <Source
             type="vector"
-            tiles={[
-              `${process.env.REACT_APP_OSM_API_BACKEND_URL}/${name}.mvt?limit=10000&bbox={bbox-epsg-3857}&epsg=3857`,
-            ]}
+            tiles={[0, 1, 2, 3].map(
+              (n) =>
+                `${process.env.REACT_APP_OSM_API_TILE_BACKEND_URL?.replace(
+                  /{n}/,
+                  n.toString()
+                )}/${name}.mvt?limit=10000&bbox={bbox-epsg-3857}&epsg=3857`
+            )}
             id={name}
             key={name}
           />
@@ -246,7 +285,16 @@ export default function MapView(props: IProps) {
         {layers?.map((layer) => (
           <Layer key={layer.id} {...(layer as any)} />
         ))}
+        {latitude && longitude && featureIds.length > 0 && (
+          <FeatureListPopup
+            featureIds={featureIds}
+            latitude={Number.parseFloat(latitude)}
+            longitude={Number.parseFloat(longitude)}
+            onClose={closePopup}
+          />
+        )}
         <ZoomToDataOnLoad />
+        <NavigationControl style={{ right: "1rem", top: "1rem" }} />
       </ReactMapGL>
       {props.children}
     </OverflowScrollContainer>

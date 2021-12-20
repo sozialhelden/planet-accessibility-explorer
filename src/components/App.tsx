@@ -63,7 +63,7 @@ function App() {
   const navbarAndBody = (
     <>
       <AppBody>
-        {sidebar}
+        {/* {sidebar} */}
         {mapView}
       </AppBody>
     </>

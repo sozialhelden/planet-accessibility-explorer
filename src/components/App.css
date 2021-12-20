@@ -10,3 +10,22 @@ html, body, #root {
 html {
   font-size: 16px;
 }
+
+.mapboxgl-popup-content {
+  padding: 0 !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+}
+
+.mapboxgl-popup-close-button {
+  transform: translate(60%, -60%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  background-color: white !important;
+  border-radius: 1.5rem !important;
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1) !important;
+  margin: .5rem;
+  width: 2.5rem;
+  height: 2.5rem;
+}
