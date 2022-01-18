@@ -16,7 +16,7 @@
     "inflection": "^1.13.1",
     "intersperse": "^1.0.0",
     "lodash": "^4.17.21",
-    "marked": "^4.0.5",
+    "marked": "^4.0.10",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
     "react-inspector": "^5.1.0",
