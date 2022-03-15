@@ -1,5 +1,7 @@
 # Planet Accessibility Explorer
 
+![Logo Icon](./public/logo192.png)
+
 **⚠️ This is experimental - Please don't expect anything from this app. It has accessibility issues, and probably still some bugs.**
 
 Shows accessibility data found on OpenStreetMap.
@@ -12,7 +14,11 @@ Caveats:
 
 ## Demo
 
-https://sozialhelden.github.io/planet-accessibility-explorer/
+- [Surfaces in Paris, France](https://sozialhelden.github.io/planet-accessibility-explorer/#/planet-accessibility-explorer/?zoom=13.776755054662608&lat=48.8658708877625&lon=2.3505427262137726)
+- [A building entrance in Saarbrücken, Germany](https://sozialhelden.github.io/planet-accessibility-explorer/#/planet-accessibility-explorer/composite/entrances_or_exits:8245385357,entrances_or_exits:8245385357,pedestrian_highways:111486617?lon=6.993899029076753&lat=49.23587964664074&zoom=21.619002812698326)
+- [Subway entrances in Karlsruhe, Germany](https://sozialhelden.github.io/planet-accessibility-explorer/#/planet-accessibility-explorer/?zoom=17.8666068729091&lat=49.009011052035035&lon=8.417438232224365)
+- [A park building in Potsdam, Germany](https://sozialhelden.github.io/planet-accessibility-explorer/#/planet-accessibility-explorer/composite/amenities:6535421531,buildings:142038726?lon=13.037360633539468&lat=52.40426761401043)
+- [A 7-Eleven in Taipei, Taiwan](https://sozialhelden.github.io/planet-accessibility-explorer/#/planet-accessibility-explorer/amenities/4838087720?lon=121.51023309211767&lat=25.05417130989083&zoom=18.277562598242074)
 
 ## Features
 
@@ -21,6 +27,7 @@ https://sozialhelden.github.io/planet-accessibility-explorer/
   - Surface quality and wheelchair accessibility of sidewalks, parks, plazas
   - Building entrances
   - Wheelchair accessibility of buildings (as outlines) and amenity PoIs (as points)
+- Shows photos from Wikidata
 
 ## Development
 
