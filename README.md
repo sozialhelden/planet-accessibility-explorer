@@ -23,8 +23,11 @@ Visualizes accessibility data from OpenStreetMap.
 - Runs in the browser
 - Shows features that have accessibility infos from OpenStreetMap:
   - Surface quality and wheelchair accessibility of sidewalks, parks, plazas
-  - Building entrances
+  - Building entrances with step height and accessibility descriptions
   - Wheelchair accessibility of buildings (as outlines) and amenity PoIs (as points)
+  - Visualizes surfaces around buildings in lower zoom levels and focuses on building accessibility in higher zoom levels
+  - Highlighted (in)accessible subway entrances
+- Click on features to display a detail view with a summary of accessibility-related OSM tags
 - Shows photos from Wikidata
 
 ## Caveat
