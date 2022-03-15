@@ -4,13 +4,11 @@
 
 **⚠️ This is experimental - Please don't expect anything from this app. It has accessibility issues, and probably still some bugs.**
 
-Shows accessibility data found on OpenStreetMap.
+Visualizes accessibility data from OpenStreetMap.
 
-Caveats:
+## Screenshot
 
-- Not tested in production yet. Built for our own needs, might not fit your requirements
-- Supports only a small subset of what's possible
-- No replacement for 'real' accessibility apps like Wheelmap, accessmap.io, …
+<img width="1792" alt="A map of Paris with colored ground surfaces. Color represents wheelchair accessibility" src="https://user-images.githubusercontent.com/192912/158473938-d77d75fb-3101-48d8-9df3-fe60f86849c4.png">
 
 ## Demo
 
@@ -28,6 +26,13 @@ Caveats:
   - Building entrances
   - Wheelchair accessibility of buildings (as outlines) and amenity PoIs (as points)
 - Shows photos from Wikidata
+
+## Caveat
+
+- Not in production yet. Built for our own needs, might not fit your requirements
+- Supports only a small subset of what's possible with OpenStreetMap accessibility tags
+- No replacement for 'real' accessibility apps like Wheelmap, accessmap.io, …
+- No search function
 
 ## Development
 
